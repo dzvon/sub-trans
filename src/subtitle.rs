@@ -1,14 +1,14 @@
 use crate::error::Error;
 use crate::translator::{Language, Param, Response, Translator};
 use std::fs;
-use std::path::PathBuf;
+use std::path::Path;
 use subparse::{timetypes::TimeSpan, SrtFile, SubtitleFile, SubtitleFileInterface, SubtitleFormat};
 
 #[derive(Clone)]
 pub(crate) struct Subtitle(pub SubtitleFile);
 
 impl Subtitle {
-    pub fn new(path: &PathBuf) -> Result<Self, Error> {
+    pub fn new(path: &Path) -> Result<Self, Error> {
         let file = fs::read(path).unwrap();
 
         let sub_format = subparse::get_subtitle_format_err(path.extension(), &file)
@@ -56,9 +56,16 @@ impl Subtitle {
         // We choose 30 text per request.
         for text in texts.chunks(30) {
             let param = Param {
-                texts: text.to_vec(),
-                source_lang: source_lang.clone(),
-                target_lang: target_lang.clone(),
+                texts: text
+                    .iter()
+                    .map(|s| {
+                        let mut ss = s.clone();
+                        ss.retain(|c| c != '\n');
+                        ss
+                    })
+                    .collect(),
+                source_lang,
+                target_lang,
             };
             let mut response = svc.translate(param)?;
 

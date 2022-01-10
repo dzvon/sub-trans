@@ -36,9 +36,7 @@ impl translator::Translator for DeepL {
 
         let client = Client::new();
 
-        let mut query = Vec::new();
-
-        query.push(("auth_key", self.auth_key.clone()));
+        let mut query = vec![("auth_key", self.auth_key.clone())];
 
         if let Some(lang) = param.source_lang {
             query.push(("source_lang", language_to_deepl_str(lang)));
@@ -49,7 +47,7 @@ impl translator::Translator for DeepL {
             query.push(("text", text));
         }
         // in order to prevent deepl from splitting the sentence unintentionally.
-        query.push(("split_sentences", "0".to_string()));
+        // query.push(("split_sentences", "0".to_string()));
 
         let response: Response = client
             .post(url)
