@@ -63,7 +63,7 @@ fn main() {
             println!("translated file path: {}", translated_file_path.display());
         }
         Err(e) => {
-            eprintln!("{}", e);
+            eprintln!("{e}");
             std::process::exit(1);
         }
     }

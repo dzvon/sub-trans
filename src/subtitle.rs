@@ -80,15 +80,13 @@ impl Subtitle {
                 (
                     x.timespan,
                     // return bilingual subtitle, original language first
-                    x.line.map_or(y.clone(), |u| format!("{}\n{}", u, y)),
+                    x.line.map_or(y.clone(), |u| format!("{u}\n{y}")),
                 )
             })
             .collect();
 
         let srt = SrtFile::create(translated_sub)
-            .map_err(|e| {
-                Error::SubtitleDecodeError(format!("error in create srtfile, {}", e.to_string()))
-            })?
+            .map_err(|e| Error::SubtitleDecodeError(format!("error in create srtfile, {e}")))?
             .to_data()
             .map_err(|e| Error::SubtitleDecodeError(e.to_string()))?;
 
